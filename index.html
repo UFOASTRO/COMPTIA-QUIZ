@@ -1,646 +1,780 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- add a previous and next button -->
-
-<!-- ADD A PLACE SHOWING THE NUMBER OF QUESTIONS ANSWERED OUT OF TOTAL NUMBER OF QUESTIONS  -->
-
-<!-- add a menu where you can select the number of the question you are doing-->
-
-<!-- ADD A SECTION AFTER THE TEST WHERE YOU CAN REVIEW ANSWERS -->
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CompTIA A+ Quiz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            text-decoration: underline;
-            padding: 20px;
-        }
-
-        .question {
-            display: none;
-        }
-
-        .question.active {
-            display: block;
-        }
-
-        .answers {
-            list-style: none;
-            padding: 0;
-        }
-
-        .answers li {
-          padding: 2px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            display: block;
-            margin: 30px auto;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .buttons{
-            display: flex;
-            justify-content: center;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .result {
-            text-align: center;
-            font-size: 18px;
-            margin-top: 20px;
-            color: #333;
-        }
-
-        #link-to-form {
-            font-weight: bold;
-            text-decoration: none;
-            color: rgb(7, 100, 3);
-        }
-
-        #timer {
-            font-size: large;
-            font-display: block;
-            font-weight: bold;
-            color: #45a049;
-        }
-
-        #previous-btn {
-           
-        }
-    </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompTIA A+ Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+      text-align: center;
+    }
+    h1 {
+      text-align: center;
+      text-decoration: underline;
+      padding: 20px;
+      font-family: "Poppins", serif;
+      
+    }
+    .timer {
+      font-size: large;
+      font-weight: bold;
+      color: #7019d3;
+      margin-bottom: 10px;
+      margin-left:80%;
+      font-family: "Poppins", serif;
+    }
+    .menu-container {
+      margin-bottom: 20px;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+    }
+    .menu-item {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      margin: 3px;
+      border: 1px solid #333;
+      border-radius: 20%;
+      cursor: pointer;
+      background-color: #f4f4f9;
+    }
+    .menu-item.answered {
+      background-color: #8624dc;
+      color: #fff;
+      font-weight: bold;
+    }
+    .question {
+      display: none;
+      text-align: left;
+    }
+    .question.active {
+      display: block;
+    }
+    .answers {
+      list-style: none;
+      padding: 0;
+    }
+    .answers li {
+      padding: 2px;
+      margin-bottom: 20px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #7c89f1;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #7925c2;
+    }
+    .result {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 20px;
+      color: #333;
+    }
+    #link-to-form {
+      font-weight: bold;
+      text-decoration: none;
+      color: #8624dc;
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="timer" id="timer">30:00</div>
-        <h1>CompTIA A+ Quiz</h1>
-        <div id="quiz-container">
-            <!-- Quiz questions will be injected here -->
-        </div>
-        <div class="buttons">
-            <button id="previous-btn">Previous</button>
-            <button id="next-btn">Next</button>
-        </div>
-        <button id="submit-btn" style="display: none;">Submit</button>
-        <div class="result" id="result"></div>
+  <div class="container">
+    <div class="timer" id="timer">30:00</div>
+    <h1>CompTIA A+ Quiz</h1>
+    <!-- Menu Selector -->
+    <div id="quiz-container">
+      <!-- Quiz questions will be injected here -->
     </div>
-
-    <script>
-        const quizData = [
-            {
-                "question": "What is the function of a motherboard in a PC?",
-                "options": [
-                    "Store data",
-                    "Connect and house critical components",
-                    "Provide backup power",
-                    "Manage peripheral devices"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which type of adapter converts HDMI to VGA?",
-                "options": [
-                    "Active adapter",
-                    "Passive adapter",
-                    "Signal adapter",
-                    "Composite adapter"
-                ],
-                "answer": 0
-            },
-            {
-                "question": "Which cable type supports the fastest data transfer rate?",
-                "options": [
-                    "USB 2.0",
-                    "USB 3.2 Gen 2x2",
-                    "SATA II",
-                    "Thunderbolt 3"
-                ],
-                "answer": 3
-            },
-            {
-                "question": "Which port is used for connecting a computer to a local area network?",
-                "options": [
-                    "HDMI",
-                    "USB-C",
-                    "RJ45",
-                    "DisplayPort"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "What does a CPU fan and heat sink primarily prevent?",
-                "options": [
-                    "Overheating",
-                    "Overclocking",
-                    "Memory corruption",
-                    "Sudden shutdown"
-                ],
-                "answer": 0
-            },
-            {
-                "question": "Which type of RAM is the latest in terms of performance?",
-                "options": [
-                    "DDR3",
-                    "DDR4",
-                    "DDR5",
-                    "DDR2"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "What is the primary use of a Molex connector?",
-                "options": [
-                    "Powering modern SSDs",
-                    "Connecting older drives and fans",
-                    "Video display output",
-                    "Network connections"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "What is the most likely cause of intermittent lockups in a PC?",
-                "options": [
-                    "Malware infection",
-                    "Faulty hardware or thermal issues",
-                    "Low storage space",
-                    "Overclocked CPU"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "How can a technician diagnose a faulty video cable?",
-                "options": [
-                    "Replace the cable with a known good one",
-                    "Check the OS display settings",
-                    "Update the video drivers",
-                    "Adjust the monitor brightness"
-                ],
-                "answer": 0
-            },
-            {
-                "question": "What does POST indicate during boot-up?",
-                "options": [
-                    "Power On Self Test",
-                    "Pre-Operating System Test",
-                    "Programmed Operating System Task",
-                    "Process Optimization System Tool"
-                ],
-                "answer": 0
-            },
-            {
-                "question": "Which protocol is used to translate domain names to IP addresses?",
-                "options": [
-                    "HTTP",
-                    "DNS",
-                    "FTP",
-                    "DHCP"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "What value should be entered for the subnet mask of 172.16.0.0/16?",
-                "options": [
-                    "255.255.255.0",
-                    "255.255.0.0",
-                    "255.0.0.0",
-                    "255.255.255.255"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "A SOHO router can automatically assign IP addresses to connected devices.",
-                "options": [
-                    "True",
-                    "False"
-                ],
-                "answer": 0
-            },
-            {
-                "question": "Which wireless standard operates on both 2.4 GHz and 5 GHz bands?",
-                "options": [
-                    "802.11g",
-                    "802.11n",
-                    "802.11a",
-                    "802.11b"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "What Linux command lists all files and directories in detail?",
-                "options": [
-                    "ls",
-                    "ls -la",
-                    "dir",
-                    "cat"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "How do you check the integrity of protected system files in Windows?",
-                "options": [
-                    "chkdsk",
-                    "sfc",
-                    "format",
-                    "defrag"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "What is Time Machine used for in macOS?",
-                "options": [
-                    "Managing files",
-                    "Backing up data",
-                    "Configuring network settings",
-                    "Upgrading the OS"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "What command deletes the contents of a folder and all its subdirectories in Linux?",
-                "options": [
-                    "rm",
-                    "rm -r",
-                    "del",
-                    "rmdir"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which protocol encrypts website traffic?",
-                "options": [
-                    "HTTP",
-                    "HTTPS",
-                    "FTP",
-                    "Telnet"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which attack targets vulnerabilities in SQL databases?",
-                "options": [
-                    "Phishing",
-                    "SQL Injection",
-                    "DDoS",
-                    "Brute force"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "What does WPA3 improve over WPA2?",
-                "options": [
-                    "Speed",
-                    "Encryption",
-                    "Range",
-                    "Compatibility"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "A desktop computer randomly shuts down during normal operation. When restarted, it works normally for a while before shutting down again. What is the MOST likely cause?",
-                "options": [
-                    "Bad RAM",
-                    "Overheating",
-                    "Hard drive failure",
-                    "Operating system corruption"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which of the following CPU socket types is designed for Intel processors?",
-                "options": [
-                    "AM4",
-                    "TR4",
-                    "LGA 1700",
-                    "FM2+"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "Users report streaks on printed pages from a laser printer. Which component should be checked FIRST?",
-                "options": [
-                    "Fuser",
-                    "Transfer roller",
-                    "Toner cartridge",
-                    "Imaging drum"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "A color inkjet printer is producing prints with incorrect colors. After running the printer's built-in cleaning cycle, the problem persists. What should be done NEXT?",
-                "options": [
-                    "Replace the paper",
-                    "Print a calibration page",
-                    "Update printer drivers",
-                    "Replace all ink cartridges"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which of the following wireless frequencies typically provides the BEST range?",
-                "options": [
-                    "2.4 GHz",
-                    "5 GHz",
-                    "6 GHz",
-                    "60 GHz"
-                ],
-                "answer": 0
-            },
-            {
-                "question": "A network administrator needs to implement VLANs. Which network device is REQUIRED?",
-                "options": [
-                    "Hub",
-                    "Managed switch",
-                    "Wireless router",
-                    "Repeater"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which of the following is the MOST secure method of unlocking a smartphone?",
-                "options": [
-                    "Pattern lock",
-                    "PIN code",
-                    "Biometric authentication",
-                    "Swipe to unlock"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "A user's Android phone is running slowly and showing unexpected advertisements. What should be checked FIRST?",
-                "options": [
-                    "Battery health",
-                    "Recently installed apps",
-                    "Operating system version",
-                    "Storage space"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which Windows tool would you use to view and manage disk partitions?",
-                "options": [
-                    "Disk Cleanup",
-                    "Disk Defragmenter",
-                    "Disk Management",
-                    "Storage Sense"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "A user cannot boot into Windows and receives a 'Boot Configuration Data File is Missing' error. Which tool should be used to repair this?",
-                "options": [
-                    "CHKDSK",
-                    "SFC",
-                    "Bootrec",
-                    "DISM"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "Which type of malware encrypts user files and demands payment for decryption?",
-                "options": [
-                    "Trojan",
-                    "Worm",
-                    "Ransomware",
-                    "Spyware"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "A company wants to ensure that terminated employees cannot access company resources. Which should be implemented?",
-                "options": [
-                    "Off-boarding procedure",
-                    "Password complexity requirements",
-                    "Multi-factor authentication",
-                    "Account lockout policy"
-                ],
-                "answer": 0
-            },
-            {
-                "question": "A user needs to install software on multiple identical workstations. Which method is MOST efficient?",
-                "options": [
-                    "Manual installation on each machine",
-                    "Creating an image for deployment",
-                    "Remote installation",
-                    "User self-installation"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which command would you use to view the routing table in Windows?",
-                "options": [
-                    "ipconfig",
-                    "netstat",
-                    "route print",
-                    "tracert"
-                ],
-                "answer": 2
-            },
-            {
-                "question": "Which Windows feature allows a user to run a program with administrative privileges?",
-                "options": [
-                    "Safe Mode",
-                    "Run as administrator",
-                    "System Restore",
-                    "Task Manager"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "A technician needs to work on a user's computer containing sensitive data. Which document should be completed FIRST?",
-                "options": [
-                    "Work order",
-                    "Non-disclosure agreement",
-                    "Service level agreement",
-                    "Acceptable use policy"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "Which backup type only backs up files that have changed since the last full backup?",
-                "options": [
-                    "Full backup",
-                    "Incremental backup",
-                    "Differential backup",
-                    "Mirror backup"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "A user reports that their smartphone calendar isn't syncing with their computer. Which should be checked FIRST?",
-                "options": [
-                    "Internet connection",
-                    "Account settings",
-                    "Device storage",
-                    "Operating system version"
-                ],
-                "answer": 0
-            },
-            {
-                "question": "Which mobile device feature should be enabled to protect data if the device is lost?",
-                "options": [
-                    "GPS tracking",
-                    "Remote wipe",
-                    "Screen lock",
-                    "Backup service"
-                ],
-                "answer": 1
-            },
-            {
-                "question": "A laptop user reports that their touchpad occasionally becomes unresponsive. What should be checked FIRST?",
-                "options": [
-                    "Function key combinations",
-                    "Device drivers",
-                    "Power settings",
-                    "Windows updates"
-                ],
-                "answer": 0
-            }
-        ];
-
-        const quizContainer = document.getElementById("quiz-container");
-        const nextButton = document.getElementById("next-btn");
-        const submitButton = document.getElementById("submit-btn");
-        const resultContainer = document.getElementById("result");
-        let currentQuestionIndex = 0;
-
-        function renderQuiz() {
-            quizData.forEach((item, index) => {
-                const questionDiv = document.createElement("div");
-                questionDiv.classList.add("question");
-                if (index === 0) questionDiv.classList.add("active");
-
-                const questionText = document.createElement("p");
-                questionText.textContent = `${index + 1}. ${item.question}`;
-                questionDiv.appendChild(questionText);
-
-                const answersList = document.createElement("ul");
-                answersList.classList.add("answers");
-
-                item.options.forEach((option, optionIndex) => {
-                    const answerItem = document.createElement("li");
-
-                    const answerLabel = document.createElement("label");
-                    answerLabel.textContent = option;
-
-                    const answerInput = document.createElement("input");
-                    answerInput.type = "radio";
-                    answerInput.name = `question-${index}`;
-                    answerInput.value = optionIndex;
-
-                    answerLabel.prepend(answerInput);
-                    answerItem.appendChild(answerLabel);
-                    answersList.appendChild(answerItem);
-                });
-
-                questionDiv.appendChild(answersList);
-                quizContainer.appendChild(questionDiv);
-            });
-        }
-
-        function showQuestion(index) {
-            const questions = document.querySelectorAll(".question");
-            questions.forEach((q, i) => {
-                q.classList.toggle("active", i === index);
-            });
-
-            if (index === quizData.length - 1) {
-                nextButton.style.display = "none";
-                submitButton.style.display = "block";
-            } else {
-                nextButton.style.display = "block";
-                submitButton.style.display = "none";
-            }
-        }
-
-        function calculateScore() {
-            let score = 0;
-
-            quizData.forEach((item, index) => {
-                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
-                if (selectedOption && parseInt(selectedOption.value) === item.answer) {
-                    score++;
-                }
-            });
-
-            return score;
-        }
-
-        nextButton.addEventListener("click", () => {
-            if (currentQuestionIndex < quizData.length - 1) {
-                currentQuestionIndex++;
-                showQuestion(currentQuestionIndex);
-            }
+    <div class="buttons">
+      <button id="previous-btn">Previous</button>
+      <button id="next-btn">Next</button>
+    </div>
+    <button id="submit-btn" style="display: none;">Submit</button>
+    <div class="result" id="result"></div>
+</div>
+<div class="menu-container" id="menu-container"></div>
+    
+  <center><a href="https://forms.gle/M1Z5YQ3WkvFtj6nm7" id="link-to-form">DEVELOPED BY BELLO OLUWANIFEMI</a></center>
+  
+  <script>
+    const quizData = [
+      {
+        "question": "What is the function of a motherboard in a PC?",
+        "options": [
+          "Store data",
+          "Connect and house critical components",
+          "Provide backup power",
+          "Manage peripheral devices"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Which type of adapter converts HDMI to VGA?",
+        "options": [
+          "Active adapter",
+          "Passive adapter",
+          "Signal adapter",
+          "Composite adapter"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Which cable type supports the fastest data transfer rate?",
+        "options": [
+          "USB 2.0",
+          "USB 3.2 Gen 2x2",
+          "SATA II",
+          "Thunderbolt 3"
+        ],
+        "answer": 3
+      },
+      {
+        "question": "Which port is used for connecting a computer to a local area network?",
+        "options": [
+          "HDMI",
+          "USB-C",
+          "RJ45",
+          "DisplayPort"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "What does a CPU fan and heat sink primarily prevent?",
+        "options": [
+          "Overheating",
+          "Overclocking",
+          "Memory corruption",
+          "Sudden shutdown"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Which type of RAM is the latest in terms of performance?",
+        "options": [
+          "DDR3",
+          "DDR4",
+          "DDR5",
+          "DDR2"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "What is the primary use of a Molex connector?",
+        "options": [
+          "Powering modern SSDs",
+          "Connecting older drives and fans",
+          "Video display output",
+          "Network connections"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "What is the most likely cause of intermittent lockups in a PC?",
+        "options": [
+          "Malware infection",
+          "Faulty hardware or thermal issues",
+          "Low storage space",
+          "Overclocked CPU"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "How can a technician diagnose a faulty video cable?",
+        "options": [
+          "Replace the cable with a known good one",
+          "Check the OS display settings",
+          "Update the video drivers",
+          "Adjust the monitor brightness"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "What does POST indicate during boot-up?",
+        "options": [
+          "Power On Self Test",
+          "Pre-Operating System Test",
+          "Programmed Operating System Task",
+          "Process Optimization System Tool"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Which protocol is used to translate domain names to IP addresses?",
+        "options": [
+          "HTTP",
+          "DNS",
+          "FTP",
+          "DHCP"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "What value should be entered for the subnet mask of 172.16.0.0/16?",
+        "options": [
+          "255.255.255.0",
+          "255.255.0.0",
+          "255.0.0.0",
+          "255.255.255.255"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "A SOHO router can automatically assign IP addresses to connected devices.",
+        "options": [
+          "True",
+          "False"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Which wireless standard operates on both 2.4 GHz and 5 GHz bands?",
+        "options": [
+          "802.11g",
+          "802.11n",
+          "802.11a",
+          "802.11b"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Which protocol encrypts website traffic?",
+        "options": [
+          "HTTP",
+          "HTTPS",
+          "FTP",
+          "Telnet"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "How do you check the integrity of protected system files in Windows?",
+        "options": [
+          "chkdsk",
+          "sfc",
+          "format",
+          "defrag"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "A desktop computer randomly shuts down during normal operation. When restarted, it works normally for a while before shutting down again. What is the MOST likely cause?",
+        "options": [
+          "Bad RAM",
+          "Overheating",
+          "Hard drive failure",
+          "Operating system corruption"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Which of the following CPU socket types is designed for Intel processors?",
+        "options": [
+          "AM4",
+          "TR4",
+          "LGA 1700",
+          "FM2+"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "Users report streaks on printed pages from a laser printer. Which component should be checked FIRST?",
+        "options": [
+          "Fuser",
+          "Transfer roller",
+          "Toner cartridge",
+          "Imaging drum"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "A color inkjet printer is producing prints with incorrect colors. After running the printer's built-in cleaning cycle, the problem persists. What should be done NEXT?",
+        "options": [
+          "Replace the paper",
+          "Print a calibration page",
+          "Update printer drivers",
+          "Replace all ink cartridges"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Which of the following wireless frequencies typically provides the BEST range?",
+        "options": [
+          "2.4 GHz",
+          "5 GHz",
+          "6 GHz",
+          "60 GHz"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "A network administrator needs to implement VLANs. Which network device is REQUIRED?",
+        "options": [
+          "Hub",
+          "Managed switch",
+          "Wireless router",
+          "Repeater"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Which of the following is the MOST secure method of unlocking a smartphone?",
+        "options": [
+          "Pattern lock",
+          "PIN code",
+          "Biometric authentication",
+          "Swipe to unlock"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "A user's Android phone is running slowly and showing unexpected advertisements. What should be checked FIRST?",
+        "options": [
+          "Battery health",
+          "Recently installed apps",
+          "Operating system version",
+          "Storage space"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Which Windows tool would you use to view and manage disk partitions?",
+        "options": [
+          "Disk Cleanup",
+          "Disk Defragmenter",
+          "Disk Management",
+          "Storage Sense"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "A user cannot boot into Windows and receives a 'Boot Configuration Data File is Missing' error. Which tool should be used to repair this?",
+        "options": [
+          "CHKDSK",
+          "SFC",
+          "Bootrec",
+          "DISM"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "Which command would you use to view the routing table in Windows?",
+        "options": [
+          "ipconfig",
+          "netstat",
+          "route print",
+          "tracert"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "Which Windows feature allows a user to run a program with administrative privileges?",
+        "options": [
+          "Safe Mode",
+          "Run as administrator",
+          "System Restore",
+          "Task Manager"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "A user reports that their smartphone calendar isn't syncing with their computer. Which should be checked FIRST?",
+        "options": [
+          "Internet connection",
+          "Account settings",
+          "Device storage",
+          "Operating system version"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Which mobile device feature should be enabled to protect data if the device is lost?",
+        "options": [
+          "GPS tracking",
+          "Remote wipe",
+          "Screen lock",
+          "Backup service"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "A laptop user reports that their touchpad occasionally becomes unresponsive. What should be checked FIRST?",
+        "options": [
+          "Function key combinations",
+          "Device drivers",
+          "Power settings",
+          "Windows updates"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Lesson 2: Installing System Devices – What is the primary function of a Power Supply Unit (PSU) in a PC?",
+        "options": [
+          "Convert AC to DC for internal components",
+          "Store data temporarily",
+          "Process instructions",
+          "Provide display output"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Lesson 2: Installing System Devices – Which type of storage device uses no moving parts and employs flash memory?",
+        "options": [
+          "Hard Disk Drive (HDD)",
+          "Solid-State Drive (SSD)",
+          "Hybrid Drive",
+          "Optical Drive"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 2: Installing System Devices – Which interface is commonly used to connect an SSD directly to the motherboard for high-speed data transfer?",
+        "options": [
+          "SATA",
+          "USB",
+          "M.2",
+          "PCI"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "Lesson 2: Installing System Devices – What is a key advantage of DDR5 memory over DDR4?",
+        "options": [
+          "Lower latency only",
+          "Higher speed and improved efficiency",
+          "Smaller physical size",
+          "Lower manufacturing cost"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 4: Comparing Local Networking Hardware – Which cable type is most commonly used for Ethernet networking in homes?",
+        "options": [
+          "Coaxial cable",
+          "Fiber optic cable",
+          "Unshielded Twisted Pair (UTP)",
+          "Shielded Twisted Pair (STP)"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "Lesson 4: Comparing Local Networking Hardware – What is the primary purpose of a patch panel in a network?",
+        "options": [
+          "To provide wireless connectivity",
+          "To organize and connect network cables",
+          "To amplify network signals",
+          "To serve as a network firewall"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 5: Configuring Network Addressing – Which protocol is responsible for automatically assigning IP addresses to devices on a network?",
+        "options": [
+          "DNS",
+          "DHCP",
+          "TCP",
+          "ARP"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 5: Configuring Network Addressing – What does a subnet mask do in an IP network?",
+        "options": [
+          "Filters unwanted traffic",
+          "Divides the IP address into network and host portions",
+          "Assigns IP addresses to devices",
+          "Encrypts data transmission"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 8: Supporting Mobile Devices – Which mobile device feature helps secure data if the device is lost?",
+        "options": [
+          "Screen brightness adjustment",
+          "Remote wipe",
+          "Battery saver mode",
+          "Bluetooth deactivation"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 8: Supporting Mobile Devices – Which mobile operating system is based on the Linux kernel?",
+        "options": [
+          "iOS",
+          "Android",
+          "Windows Phone",
+          "BlackBerry OS"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 10: Configuring Windows – Which Windows tool is used to manage startup programs and services?",
+        "options": [
+          "Task Manager",
+          "msconfig",
+          "Control Panel",
+          "Device Manager"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 10: Configuring Windows – What is the purpose of the Windows Registry?",
+        "options": [
+          "It stores temporary files",
+          "It holds system configuration settings",
+          "It manages user passwords",
+          "It schedules tasks"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 10: Configuring Windows – Which Windows utility can be used to restore the system to a previous working state?",
+        "options": [
+          "System Restore",
+          "Disk Cleanup",
+          "Backup and Restore",
+          "File History"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Lesson 10: Configuring Windows – What is the function of the 'chkdsk' utility in Windows?",
+        "options": [
+          "To check and repair disk errors",
+          "To defragment the hard drive",
+          "To update drivers",
+          "To scan for viruses"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Lesson 2: Installing System Devices – Which cooling method is commonly used in modern PCs to dissipate heat from components?",
+        "options": [
+          "Liquid cooling",
+          "Heat sink and fan",
+          "Passive cooling only",
+          "Thermoelectric cooling"
+        ],
+        "answer": 1
+      },
+      {
+        "question": "Lesson 2: Installing System Devices – Which voltage rail provided by a PSU is commonly used to power high-performance components such as graphics cards?",
+        "options": [
+          "3.3 VDC",
+          "5 VDC",
+          "12 VDC",
+          "24 VDC"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "Lesson 2: Installing System Devices – In a Hard Disk Drive (HDD), which component is responsible for reading and writing data on the platters?",
+        "options": [
+          "Spindle",
+          "Actuator",
+          "Read/Write heads",
+          "Platter"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "Lesson 2: Installing System Devices – What factor most influences the performance of an HDD?",
+        "options": [
+          "Rotational speed and seek time",
+          "Storage capacity",
+          "Cache size",
+          "Physical size"
+        ],
+        "answer": 0
+      },
+      {
+        "question": "Lesson 5: Configuring Network Addressing – In a RAID 5 configuration with three drives, what happens if one drive fails?",
+        "options": [
+          "Data is completely lost",
+          "The array continues to operate in degraded mode",
+          "Performance improves",
+          "The system shuts down"
+        ],
+        "answer": 1
+      }
+    ];
+    
+    const quizContainer = document.getElementById("quiz-container");
+    const menuContainer = document.getElementById("menu-container");
+    const nextButton = document.getElementById("next-btn");
+    const previousButton = document.getElementById("previous-btn");
+    const submitButton = document.getElementById("submit-btn");
+    const resultContainer = document.getElementById("result");
+    let currentQuestionIndex = 0;
+    
+    function renderQuiz() {
+      quizData.forEach((item, index) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.classList.add("question");
+        if (index === 0) questionDiv.classList.add("active");
+    
+        const questionText = document.createElement("p");
+        questionText.textContent = `${index + 1}. ${item.question}`;
+        questionDiv.appendChild(questionText);
+    
+        const answersList = document.createElement("ul");
+        answersList.classList.add("answers");
+    
+        item.options.forEach((option, optionIndex) => {
+          const answerItem = document.createElement("li");
+          const answerLabel = document.createElement("label");
+          answerLabel.textContent = option;
+    
+          const answerInput = document.createElement("input");
+          answerInput.type = "radio";
+          answerInput.name = `question-${index}`;
+          answerInput.value = optionIndex;
+          // When an answer is selected, update the menu status.
+          answerInput.addEventListener("change", () => {
+            updateMenuStatus(index);
+          });
+    
+          answerLabel.prepend(answerInput);
+          answerItem.appendChild(answerLabel);
+          answersList.appendChild(answerItem);
         });
-
-        submitButton.addEventListener("click", () => {
-            const score = calculateScore();
-            resultContainer.textContent = `You scored ${score} out of ${quizData.length}`;
+    
+        questionDiv.appendChild(answersList);
+        quizContainer.appendChild(questionDiv);
+      });
+    }
+    
+    function renderMenu() {
+      // Clear existing menu items.
+      menuContainer.innerHTML = "";
+      quizData.forEach((item, index) => {
+        const menuItem = document.createElement("div");
+        menuItem.classList.add("menu-item");
+        menuItem.textContent = index + 1;
+        menuItem.id = `menu-${index}`;
+        menuItem.addEventListener("click", () => {
+          currentQuestionIndex = index;
+          showQuestion(index);
         });
-
-        document.getElementById("previous-btn").addEventListener("click", () => {
-            if (currentQuestionIndex < quizData.length + 1) {
-                currentQuestionIndex--;
-                showQuestion(currentQuestionIndex);
-            }
-        });
-
-
-        renderQuiz();
-        let timeLeft = 25 * 60; // 1 hour 30 minutes in seconds
-        const timerElement = document.getElementById("timer");
-
-        function startTimer() {
-            const timerInterval = setInterval(() => {
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    alert("Time's up! Submitting quiz now.");
-                    submitQuiz();
-                }
-                timeLeft--;
-            }, 1000);
+        menuContainer.appendChild(menuItem);
+      });
+    }
+    
+    function updateMenuStatus(index) {
+      // Check if the question has an answer selected.
+      const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+      const menuItem = document.getElementById(`menu-${index}`);
+      if (selectedOption) {
+        menuItem.classList.add("answered");
+      } else {
+        menuItem.classList.remove("answered");
+      }
+    }
+    
+    function showQuestion(index) {
+      const questions = document.querySelectorAll(".question");
+      questions.forEach((q, i) => {
+        q.classList.toggle("active", i === index);
+      });
+      // Update navigation buttons.
+      previousButton.style.display = index === 0 ? "none" : "block";
+      if (index === quizData.length - 1) {
+        nextButton.style.display = "none";
+        submitButton.style.display = "block";
+      } else {
+        nextButton.style.display = "block";
+        submitButton.style.display = "none";
+      }
+    }
+    
+    function calculateScore() {
+      let score = 0;
+      quizData.forEach((item, index) => {
+        const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+        if (selectedOption && parseInt(selectedOption.value) === item.answer) {
+          score++;
         }
-
-        function submitQuiz() {
-            const score = calculateScore();
-            resultContainer.textContent = `You scored ${score} out of ${quizData.length}`;
-            nextButton.style.display = "none";
-            submitButton.style.display = "none";
+      });
+      return score;
+    }
+    
+    nextButton.addEventListener("click", () => {
+      if (currentQuestionIndex < quizData.length - 1) {
+        currentQuestionIndex++;
+        showQuestion(currentQuestionIndex);
+      }
+    });
+    
+    previousButton.addEventListener("click", () => {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion(currentQuestionIndex);
+      }
+    });
+    
+    submitButton.addEventListener("click", () => {
+      const score = calculateScore();
+      resultContainer.textContent = `You scored ${score} out of ${quizData.length}`;
+    });
+    
+    // Timer setup (25 minutes for testing; adjust as needed)
+    let timeLeft = 25 * 60; 
+    const timerElement = document.getElementById("timer");
+    function startTimer() {
+      const timerInterval = setInterval(() => {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("Time's up! Submitting quiz now.");
+          submitQuiz();
         }
-        startTimer();
-    </script>
-    <center><a href="https://forms.gle/M1Z5YQ3WkvFtj6nm7" id="link-to-form">DEVELOPED BY BELLO OLUWANIFEMI</a></center>
+        timeLeft--;
+      }, 1000);
+    }
+    
+    function submitQuiz() {
+      const score = calculateScore();
+      resultContainer.textContent = `You scored ${score} out of ${quizData.length}`;
+      nextButton.style.display = "none";
+      previousButton.style.display = "none";
+      submitButton.style.display = "none";
+    }
+    
+    // Initial render
+    renderQuiz();
+    renderMenu();
+    showQuestion(currentQuestionIndex);
+    startTimer();
+  </script>
 </body>
-
 </html>
