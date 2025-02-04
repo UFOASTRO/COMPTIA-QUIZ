@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CompTIA A+ Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
   <style>
     *{
         font-family: "Poppins", serif;
@@ -48,6 +48,12 @@
       padding: 10px;
       font-family: "Poppins", serif;
     }
+    .menu-container {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
     .menu-item {
       display: inline-block;
       width: 30px;
@@ -66,11 +72,18 @@
       color: #fff;
       font-weight: bold;
     }
+    .menu-item.menu-correct {
+      background-color: rgb(31, 196, 31);
+      color: #fff;
+    }
+    .menu-item.menu-incorrect {
+      background-color: rgb(212, 44, 44);
+      color: #fff;
+    }
     .question {
       display: none;
       text-align: left;
       margin-bottom: 50px;
-      font-family: "Poppins", serif;
     }
     .question.active {
       display: block;
@@ -78,19 +91,27 @@
     .answers {
       list-style: none;
       padding: 0;
-      /* font-family: "Poppins", serif; */
     }
     .answers li {
       padding: 2px;
       margin-bottom: 20px;
     }
+    /* Style for reviewed answers */
+    .correct-answer {
+      background-color: lightgreen;
+      border: 1px none ;
+      padding: 10px;
+    }
+    .user-answer {
+      background-color: lightblue;
+      border: 1px none ;
+      padding: 10px;
+    }
     .buttons {
       display: flex;
       justify-content: center;
       gap: 20px;
-      border: none;
-      margin: 2px 0;
-      font-family: "Poppins", serif;
+      margin: 20px 0;
     }
     button {
       padding: 10px 30px;
@@ -100,7 +121,6 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      font-family: "Poppins", serif;
     }
     button:hover {
       background-color: #3052ea;
@@ -117,6 +137,23 @@
       color: #3052ea;
       padding: 10px;
     }
+    #disclaimer{
+    font-size: 13px;
+    color:rgb(97, 97, 97);
+    padding: 5px;
+    }
+    .menu-item.active-menu {
+      /* Change this color as desired for the active question */
+      background-color: #f2d530;
+      color: #000;
+      font-weight: bold;
+    }
+    span{
+      color: #f3d842;
+    }
+    #submit-btn{
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -124,6 +161,7 @@
     <div class="timer" id="timer">30:00</div>
     <h1>CompTIA A+ Quiz</h1>
     <!-- Menu Selector -->
+    
     <div id="quiz-container">
       <!-- Quiz questions will be injected here -->
     </div>
@@ -131,13 +169,15 @@
       <button id="previous-btn">Previous</button>
       <button id="next-btn">Next</button>
     </div>
-    <button id="submit-btn" style="display: none;">Submit</button>
+    <center><button id="submit-btn" style="display: none;">Submit</button></center>
     <div class="result" id="result"></div>
-</div>
-<div class="menu-container" id="menu-container"></div>
-    
+  </div>
+  <div class="menu-container" id="menu-container"></div>
   <center><a href="https://forms.gle/M1Z5YQ3WkvFtj6nm7" id="link-to-form">DEVELOPED BY BELLO OLUWANIFEMI</a></center>
-  
+  <center id="disclaimer"><span>⚠</span> Huge disclaimer, These questions are not in anyway related to the original
+    exmination questions , and were all generated using CHAT GPT and the compTIA A+ 
+    note provided as a reference <span>⚠</span></center> 
+
   <script>
     const quizData = [
       {
@@ -717,6 +757,10 @@
       questions.forEach((q, i) => {
         q.classList.toggle("active", i === index);
       });
+      const menuItems = document.querySelectorAll(".menu-item");
+      menuItems.forEach((item, i) => {
+        item.classList.toggle("active-menu", i === index);
+      });
       // Update navigation buttons.
       previousButton.style.display = index === 0 ? "none" : "block";
       if (index === quizData.length - 1) {
@@ -739,6 +783,43 @@
       return score;
     }
     
+    function reviewQuiz() {
+      // Iterate over each question to mark answers
+      quizData.forEach((item, index) => {
+        const questionDiv = document.querySelectorAll(".question")[index];
+        const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+        const menuItem = document.getElementById(`menu-${index}`);
+    
+        // Mark the menu item: green for correct, red for incorrect (if answered)
+        if (selectedOption) {
+          if (parseInt(selectedOption.value) === item.answer) {
+            menuItem.classList.remove("answered");
+            menuItem.classList.add("menu-correct");
+          } else {
+            menuItem.classList.remove("answered");
+            menuItem.classList.add("menu-incorrect");
+          }
+        }
+    
+        // Iterate through all options for this question
+        const answerLabels = questionDiv.querySelectorAll("label");
+        answerLabels.forEach(label => {
+          const input = label.querySelector("input");
+          // Remove any previous styling
+          label.classList.remove("correct-answer");
+          label.classList.remove("user-answer");
+          // If this option is the correct answer, mark it green.
+          if (parseInt(input.value) === item.answer) {
+            label.classList.add("correct-answer");
+          }
+          // If this option is selected by the user and is not the correct answer, mark it blue.
+          if (input.checked && parseInt(input.value) !== item.answer) {
+            label.classList.add("user-answer");
+          }
+        });
+      });
+    }
+    
     nextButton.addEventListener("click", () => {
       if (currentQuestionIndex < quizData.length - 1) {
         currentQuestionIndex++;
@@ -754,34 +835,31 @@
     });
     
     submitButton.addEventListener("click", () => {
-      const score = calculateScore();
-      resultContainer.textContent = `You scored ${score} out of ${quizData.length}`;
-    });
-    
+  clearInterval(timerInterval); // Stop the timer immediately
+  const score = calculateScore();
+  resultContainer.textContent = `You scored ${score} out of ${quizData.length}`;
+  nextButton.style.display = "none";
+  previousButton.style.display = "none";
+  submitButton.style.display = "none";
+  reviewQuiz();
+});
     // Timer setup (25 minutes for testing; adjust as needed)
-    let timeLeft = 25 * 60; 
+    let timerInterval;
+    let timeLeft = 25 * 60;
     const timerElement = document.getElementById("timer");
-    function startTimer() {
-      const timerInterval = setInterval(() => {
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          alert("Time's up! Submitting quiz now.");
-          submitQuiz();
-        }
-        timeLeft--;
-      }, 1000);
+function startTimer() {
+  timerInterval = setInterval(() => {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      alert("Time's up! Submitting quiz now.");
+      submitQuiz();
     }
-    
-    function submitQuiz() {
-      const score = calculateScore();
-      resultContainer.textContent = `You scored ${score} out of ${quizData.length}`;
-      nextButton.style.display = "none";
-      previousButton.style.display = "none";
-      submitButton.style.display = "none";
-    }
+    timeLeft--;
+  }, 1000);
+}
     
     // Initial render
     renderQuiz();
